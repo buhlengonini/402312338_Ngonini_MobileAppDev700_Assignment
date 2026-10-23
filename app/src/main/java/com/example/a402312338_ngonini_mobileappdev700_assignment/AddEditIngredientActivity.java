@@ -116,6 +116,19 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
     private void showDatePickerDialog() {
         Calendar calendar_obj = Calendar.getInstance();
+        String current_date_str = et_expiry_date.getText() != null ? et_expiry_date.getText().toString().trim() : "";
+        if (!current_date_str.isEmpty()) {
+            try {
+                String[] parts = current_date_str.split("-");
+                if (parts.length == 3) {
+                    int year = Integer.parseInt(parts[0]);
+                    int month = Integer.parseInt(parts[1]) - 1;
+                    int day = Integer.parseInt(parts[2]);
+                    calendar_obj.set(year, month, day);
+                }
+            } catch (Exception ignored) {}
+        }
+
         int year_val = calendar_obj.get(Calendar.YEAR);
         int month_val = calendar_obj.get(Calendar.MONTH);
         int day_val = calendar_obj.get(Calendar.DAY_OF_MONTH);
@@ -153,7 +166,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         } else {
             try {
                 parsed_qty = Double.parseDouble(qty_input);
-                if (parsed_qty <= 0) {
+                if (parsed_qty <= 0 || Double.isNaN(parsed_qty) || Double.isInfinite(parsed_qty)) {
                     til_quantity.setError(getString(R.string.error_quantity_invalid));
                     is_valid = false;
                 }
@@ -172,21 +185,34 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             return;
         }
 
-        if (editing_item_id != -1 && existing_pantry_item != null) {
-            existing_pantry_item.setIngredientName(name_input);
-            existing_pantry_item.setItemQuantity(parsed_qty);
-            existing_pantry_item.setItemUnit(unit_input);
-            existing_pantry_item.setExpiryDate(expiry_input);
+        try {
+            if (editing_item_id != -1 && existing_pantry_item != null) {
+                existing_pantry_item.setIngredientName(name_input);
+                existing_pantry_item.setItemQuantity(parsed_qty);
+                existing_pantry_item.setItemUnit(unit_input);
+                existing_pantry_item.setExpiryDate(expiry_input);
 
-            db_helper.updatePantryItem(existing_pantry_item);
-            Toast.makeText(this, R.string.toast_item_updated, Toast.LENGTH_SHORT).show();
-        } else {
-            PantryItem new_item = new PantryItem(name_input, parsed_qty, unit_input, expiry_input);
-            db_helper.addPantryItem(new_item);
-            Toast.makeText(this, R.string.toast_item_added, Toast.LENGTH_SHORT).show();
+                int rows_affected = db_helper.updatePantryItem(existing_pantry_item);
+                if (rows_affected > 0) {
+                    Toast.makeText(this, R.string.toast_item_updated, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(this, R.string.toast_error_save, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                PantryItem new_item = new PantryItem(name_input, parsed_qty, unit_input, expiry_input);
+                long new_id = db_helper.addPantryItem(new_item);
+                if (new_id != -1) {
+                    Toast.makeText(this, R.string.toast_item_added, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(this, R.string.toast_error_save, Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (Exception e_err) {
+            e_err.printStackTrace();
+            Toast.makeText(this, R.string.toast_error_save, Toast.LENGTH_SHORT).show();
         }
-
-        finish();
     }
 
     @Override

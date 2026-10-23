@@ -67,56 +67,83 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     private void loadRecipeData() {
-        // Evaluate recipe against current pantry state
-        List<Recipe> evaluated_recipes = db_helper.getSuggestedRecipes(true);
-        for (Recipe r_obj : evaluated_recipes) {
-            if (r_obj.getRecipeId() == recipe_id) {
-                current_recipe = r_obj;
-                break;
+        try {
+            // Evaluate recipe against current pantry state
+            List<Recipe> evaluated_recipes = db_helper.getSuggestedRecipes(true);
+            if (evaluated_recipes != null) {
+                for (Recipe r_obj : evaluated_recipes) {
+                    if (r_obj.getRecipeId() == recipe_id) {
+                        current_recipe = r_obj;
+                        break;
+                    }
+                }
             }
-        }
 
-        if (current_recipe == null) {
-            // If not 100% match, fetch directly
-            current_recipe = db_helper.getRecipeById(recipe_id);
-            // Re-eval ingredients against pantry
-            List<PantryItem> pantry_items = db_helper.getAllPantryItems(null);
-            for (RecipeIngredient req_ing : current_recipe.getIngredientList()) {
-                boolean found_in_pantry = false;
-                for (PantryItem p_item : pantry_items) {
-                    if (StringNormalizer.areIngredientsMatching(p_item.getIngredientName(), req_ing.getIngredientName())) {
-                        if (StringNormalizer.isQuantitySufficient(
-                                p_item.getItemQuantity(), p_item.getItemUnit(),
-                                req_ing.getRequiredQuantity(), req_ing.getIngredientUnit())) {
-                            found_in_pantry = true;
-                            break;
+            if (current_recipe == null) {
+                // If not 100% match, fetch directly
+                current_recipe = db_helper.getRecipeById(recipe_id);
+                if (current_recipe != null && current_recipe.getIngredientList() != null) {
+                    // Re-eval ingredients against pantry
+                    List<PantryItem> pantry_items = db_helper.getAllPantryItems(null);
+                    if (pantry_items != null) {
+                        for (RecipeIngredient req_ing : current_recipe.getIngredientList()) {
+                            boolean found_in_pantry = false;
+                            for (PantryItem p_item : pantry_items) {
+                                if (StringNormalizer.areIngredientsMatching(p_item.getIngredientName(), req_ing.getIngredientName())) {
+                                    if (StringNormalizer.isQuantitySufficient(
+                                            p_item.getItemQuantity(), p_item.getItemUnit(),
+                                            req_ing.getRequiredQuantity(), req_ing.getIngredientUnit())) {
+                                        found_in_pantry = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            req_ing.setIsInPantry(found_in_pantry);
                         }
                     }
                 }
-                req_ing.setIsInPantry(found_in_pantry);
             }
-        }
 
-        if (current_recipe != null) {
-            tv_detail_title.setText(current_recipe.getRecipeName());
-            tv_detail_category.setText(current_recipe.getRecipeCategory());
-            tv_detail_prep_time.setText(String.format(Locale.ROOT, "%d mins prep", current_recipe.getPrepTimeMinutes()));
-            tv_instructions.setText(current_recipe.getRecipeInstructions());
+            if (current_recipe != null) {
+                tv_detail_title.setText(current_recipe.getRecipeName());
+                tv_detail_category.setText(current_recipe.getRecipeCategory());
+                tv_detail_prep_time.setText(String.format(Locale.ROOT, "%d mins prep", current_recipe.getPrepTimeMinutes()));
+                tv_instructions.setText(current_recipe.getRecipeInstructions());
 
-            ingredient_adapter = new RecipeIngredientAdapter(this, current_recipe.getIngredientList());
-            rv_recipe_ingredients.setAdapter(ingredient_adapter);
+                ingredient_adapter = new RecipeIngredientAdapter(this, current_recipe.getIngredientList());
+                rv_recipe_ingredients.setAdapter(ingredient_adapter);
+            } else {
+                Toast.makeText(this, R.string.toast_recipe_not_found, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } catch (Exception e_err) {
+            e_err.printStackTrace();
+            Toast.makeText(this, R.string.toast_recipe_not_found, Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
     private void showCookConfirmationDialog() {
+        if (current_recipe == null || recipe_id == -1) {
+            Toast.makeText(this, R.string.toast_error_operation, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_cook_title)
                 .setMessage(R.string.dialog_cook_msg)
                 .setPositiveButton("Deduct Ingredients", (dialog_interface, which_idx) -> {
-                    boolean success_val = db_helper.deductRecipeIngredientsFromPantry(recipe_id);
-                    if (success_val) {
-                        Toast.makeText(this, R.string.toast_deducted_success, Toast.LENGTH_SHORT).show();
-                        loadRecipeData();
+                    try {
+                        boolean success_val = db_helper.deductRecipeIngredientsFromPantry(recipe_id);
+                        if (success_val) {
+                            Toast.makeText(this, R.string.toast_deducted_success, Toast.LENGTH_SHORT).show();
+                            loadRecipeData();
+                        } else {
+                            Toast.makeText(this, R.string.toast_error_deduct, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e_err) {
+                        e_err.printStackTrace();
+                        Toast.makeText(this, R.string.toast_error_deduct, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(R.string.btn_cancel, null)

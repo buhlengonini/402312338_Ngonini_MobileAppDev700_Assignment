@@ -40,25 +40,41 @@ public class SettingsFragment extends Fragment {
         btn_reset_recipes = fragment_view.findViewById(R.id.btn_reset_recipes);
 
         btn_seed_sample_pantry.setOnClickListener(v_click -> {
-            db_helper.loadSamplePantryData();
-            Toast.makeText(requireContext(), R.string.toast_sample_loaded, Toast.LENGTH_SHORT).show();
+            if (!isAdded() || getContext() == null) return;
+            boolean success = db_helper.loadSamplePantryData();
+            if (success) {
+                Toast.makeText(requireContext(), R.string.toast_sample_loaded, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), R.string.toast_error_operation, Toast.LENGTH_SHORT).show();
+            }
         });
 
         btn_clear_pantry.setOnClickListener(v_click -> {
+            if (!isAdded() || getContext() == null) return;
             new AlertDialog.Builder(requireContext())
                     .setTitle("Clear Pantry")
                     .setMessage("Are you sure you want to clear all ingredients from your pantry?")
                     .setPositiveButton("Clear All", (dialog_interface, which_idx) -> {
-                        db_helper.clearPantry();
-                        Toast.makeText(requireContext(), R.string.toast_pantry_cleared, Toast.LENGTH_SHORT).show();
+                        if (!isAdded() || getContext() == null) return;
+                        boolean success = db_helper.clearPantry();
+                        if (success) {
+                            Toast.makeText(requireContext(), R.string.toast_pantry_cleared, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(requireContext(), R.string.toast_error_operation, Toast.LENGTH_SHORT).show();
+                        }
                     })
                     .setNegativeButton(R.string.btn_cancel, null)
                     .show();
         });
 
         btn_reset_recipes.setOnClickListener(v_click -> {
-            db_helper.resetRecipeDatabase();
-            Toast.makeText(requireContext(), R.string.toast_recipes_reset, Toast.LENGTH_SHORT).show();
+            if (!isAdded() || getContext() == null) return;
+            boolean success = db_helper.resetRecipeDatabase();
+            if (success) {
+                Toast.makeText(requireContext(), R.string.toast_recipes_reset, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), R.string.toast_error_operation, Toast.LENGTH_SHORT).show();
+            }
         });
 
         return fragment_view;

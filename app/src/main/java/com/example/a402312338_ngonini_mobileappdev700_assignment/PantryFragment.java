@@ -87,20 +87,31 @@ public class PantryFragment extends Fragment implements PantryAdapter.OnPantryIt
     }
 
     private void loadPantryData(String search_query) {
-        current_pantry_list = db_helper.getAllPantryItems(search_query);
-        pantry_adapter.updateList(current_pantry_list);
+        try {
+            current_pantry_list = db_helper.getAllPantryItems(search_query);
+            if (current_pantry_list == null) {
+                current_pantry_list = new ArrayList<>();
+            }
+            pantry_adapter.updateList(current_pantry_list);
 
-        if (current_pantry_list.isEmpty()) {
-            layout_empty_pantry.setVisibility(View.VISIBLE);
-            rv_pantry.setVisibility(View.GONE);
-        } else {
-            layout_empty_pantry.setVisibility(View.GONE);
-            rv_pantry.setVisibility(View.VISIBLE);
+            if (current_pantry_list.isEmpty()) {
+                layout_empty_pantry.setVisibility(View.VISIBLE);
+                rv_pantry.setVisibility(View.GONE);
+            } else {
+                layout_empty_pantry.setVisibility(View.GONE);
+                rv_pantry.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e_err) {
+            e_err.printStackTrace();
+            if (isAdded() && getContext() != null) {
+                Toast.makeText(getContext(), R.string.toast_error_load, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     @Override
     public void onEditItem(PantryItem item_obj) {
+        if (item_obj == null || !isAdded() || getContext() == null) return;
         Intent edit_intent = new Intent(requireContext(), AddEditIngredientActivity.class);
         edit_intent.putExtra("EXTRA_ITEM_ID", item_obj.getItemId());
         startActivity(edit_intent);
@@ -108,13 +119,17 @@ public class PantryFragment extends Fragment implements PantryAdapter.OnPantryIt
 
     @Override
     public void onDeleteItem(PantryItem item_obj) {
+        if (item_obj == null || !isAdded() || getContext() == null) return;
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.dialog_delete_title)
                 .setMessage(getString(R.string.dialog_delete_msg, item_obj.getIngredientName()))
                 .setPositiveButton(R.string.btn_delete, (dialog_interface, which_idx) -> {
-                    db_helper.deletePantryItem(item_obj.getItemId());
-                    Toast.makeText(requireContext(), R.string.toast_item_deleted, Toast.LENGTH_SHORT).show();
-                    String current_search = et_search_pantry.getText().toString();
+                    if (!isAdded() || getContext() == null) return;
+                    int rows_affected = db_helper.deletePantryItem(item_obj.getItemId());
+                    if (rows_affected > 0) {
+                        Toast.makeText(requireContext(), R.string.toast_item_deleted, Toast.LENGTH_SHORT).show();
+                    }
+                    String current_search = et_search_pantry != null && et_search_pantry.getText() != null ? et_search_pantry.getText().toString() : "";
                     loadPantryData(current_search);
                 })
                 .setNegativeButton(R.string.btn_cancel, null)

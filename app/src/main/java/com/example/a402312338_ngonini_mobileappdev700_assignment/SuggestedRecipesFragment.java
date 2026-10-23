@@ -77,20 +77,28 @@ public class SuggestedRecipesFragment extends Fragment implements RecipeAdapter.
     }
 
     private void loadRecipeSuggestions() {
-        suggested_recipe_list = db_helper.getSuggestedRecipes(is_strict_mode);
-        recipe_adapter.updateList(suggested_recipe_list);
+        try {
+            suggested_recipe_list = db_helper.getSuggestedRecipes(is_strict_mode);
+            if (suggested_recipe_list == null) {
+                suggested_recipe_list = new ArrayList<>();
+            }
+            recipe_adapter.updateList(suggested_recipe_list);
 
-        if (suggested_recipe_list.isEmpty()) {
-            layout_empty_recipes.setVisibility(View.VISIBLE);
-            rv_suggested_recipes.setVisibility(View.GONE);
-        } else {
-            layout_empty_recipes.setVisibility(View.GONE);
-            rv_suggested_recipes.setVisibility(View.VISIBLE);
+            if (suggested_recipe_list.isEmpty()) {
+                layout_empty_recipes.setVisibility(View.VISIBLE);
+                rv_suggested_recipes.setVisibility(View.GONE);
+            } else {
+                layout_empty_recipes.setVisibility(View.GONE);
+                rv_suggested_recipes.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e_err) {
+            e_err.printStackTrace();
         }
     }
 
     @Override
     public void onRecipeClick(Recipe recipe_obj) {
+        if (recipe_obj == null || !isAdded() || getContext() == null) return;
         Intent detail_intent = new Intent(requireContext(), RecipeDetailActivity.class);
         detail_intent.putExtra("EXTRA_RECIPE_ID", recipe_obj.getRecipeId());
         startActivity(detail_intent);

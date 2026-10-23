@@ -71,4 +71,11 @@
     <string name="toast_sample_loaded">Sample pantry ingredients loaded!</string>
     <string name="toast_pantry_cleared">Pantry cleared</string>
     <string name="toast_recipes_reset">Recipe database reset to default</string>
+
+    <!-- Error Messages -->
+    <string name="toast_error_save">Failed to save ingredient. Please try again.</string>
+    <string name="toast_error_load">Error loading data from database.</string>
+    <string name="toast_error_deduct">Failed to deduct ingredients. Please try again.</string>
+    <string name="toast_recipe_not_found">Recipe details could not be found.</string>
+    <string name="toast_error_operation">An error occurred while processing your request.</string>
 </resources>
