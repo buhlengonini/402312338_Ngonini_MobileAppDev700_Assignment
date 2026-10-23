@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Primary Theme Colors (Forest / Fresh Food Green) -->
+    <color name="primary">#2E7D32</color>
+    <color name="primary_dark">#1B5E20</color>
+    <color name="primary_light">#A5D6A7</color>
+    <color name="accent">#F57C00</color>
+    <color name="accent_light">#FFE0B2</color>
+
+    <!-- Background & Surface Colors -->
+    <color name="background">#F5F7F5</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="card_background">#FFFFFF</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#9E9E9E</color>
+
+    <!-- Status & Badge Colors -->
+    <color name="status_fresh">#388E3C</color>
+    <color name="status_expiring">#F57C00</color>
+    <color name="status_expired">#D32F2F</color>
+    <color name="status_missing">#E53935</color>
+    <color name="status_almost">#1976D2</color>
+
+    <!-- Divider & Border -->
+    <color name="divider">#E0E0E0</color>
+</resources>

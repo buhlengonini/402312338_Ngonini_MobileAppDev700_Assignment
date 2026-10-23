@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smart Pantry Manager</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_pantry">Pantry</string>
+    <string name="nav_suggested">Recipes</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Pantry List Screen -->
+    <string name="title_pantry">My Pantry</string>
+    <string name="search_pantry_hint">Search pantry ingredients...</string>
+    <string name="add_ingredient">Add Ingredient</string>
+    <string name="edit_ingredient">Edit Ingredient</string>
+    <string name="pantry_empty_title">Your Pantry is Empty!</string>
+    <string name="pantry_empty_desc">Add ingredients you have at home to get personalized recipe suggestions.</string>
+    <string name="expiring_soon_tag">Expiring Soon</string>
+    <string name="expired_tag">Expired</string>
+    <string name="fresh_tag">Fresh</string>
+
+    <!-- Add/Edit Form -->
+    <string name="label_ingredient_name">Ingredient Name</string>
+    <string name="label_quantity">Quantity</string>
+    <string name="label_unit">Measurement Unit</string>
+    <string name="label_expiry_date">Expiry Date (Optional)</string>
+    <string name="hint_select_date">Tap to select expiry date</string>
+    <string name="btn_save">Save Ingredient</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="error_name_required">Please enter an ingredient name</string>
+    <string name="error_quantity_invalid">Please enter a positive quantity</string>
+    <string name="error_unit_required">Please select a measurement unit</string>
+
+    <!-- Suggested Recipes Screen -->
+    <string name="title_suggested_recipes">Suggested Recipes</string>
+    <string name="tab_strict_match">Strict Match (100% Ready)</string>
+    <string name="tab_almost_there">Almost There (Missing 1)</string>
+    <string name="recipes_empty_title">No Recipe Matches Found</string>
+    <string name="recipes_empty_desc">No recipes match your pantry ingredients strictly. Try adding more items to your pantry!</string>
+    <string name="prep_time_format">%1$d mins prep</string>
+    <string name="match_percentage_100">100% Ingredients Available</string>
+    <string name="match_missing_1">Missing 1 Ingredient</string>
+
+    <!-- Recipe Detail Screen -->
+    <string name="title_recipe_detail">Recipe Detail</string>
+    <string name="section_ingredients">Required Ingredients</string>
+    <string name="section_instructions">Preparation Instructions</string>
+    <string name="btn_cook_this">I Cooked This Recipe!</string>
+    <string name="dialog_cook_title">Deduct Ingredients?</string>
+    <string name="dialog_cook_msg">This will automatically deduct the required quantities of these ingredients from your pantry database.</string>
+    <string name="toast_deducted_success">Deducted recipe ingredients from your pantry!</string>
+
+    <!-- Settings Screen -->
+    <string name="title_settings">Settings &amp; Preferences</string>
+    <string name="setting_expiry_alerts">Expiring Soon Alerts</string>
+    <string name="setting_expiry_alerts_desc">Show warnings for ingredients expiring within 3 days</string>
+    <string name="setting_unit_system">Measurement System</string>
+    <string name="setting_data_management">Data Management</string>
+    <string name="btn_seed_sample_pantry">Load Sample Pantry</string>
+    <string name="btn_clear_pantry">Clear All Pantry Items</string>
+    <string name="btn_reset_recipes">Reset Recipe Database</string>
+    <string name="setting_about">About Smart Pantry Manager</string>
+    <string name="about_description">Developed for Mobile App Development 700 Assignment.\nUses local SQLite database with strict recipe ingredient matching.</string>
+
+    <!-- Common & Dialogs -->
+    <string name="dialog_delete_title">Delete Item</string>
+    <string name="dialog_delete_msg">Are you sure you want to remove \'%1$s\' from your pantry?</string>
+    <string name="btn_delete">Delete</string>
+    <string name="toast_item_added">Ingredient added to pantry</string>
+    <string name="toast_item_updated">Ingredient updated</string>
+    <string name="toast_item_deleted">Ingredient removed from pantry</string>
+    <string name="toast_sample_loaded">Sample pantry ingredients loaded!</string>
+    <string name="toast_pantry_cleared">Pantry cleared</string>
+    <string name="toast_recipes_reset">Recipe database reset to default</string>
+</resources>
